@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Budget Planner</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="logo" aria-hidden="true">&#9670;</span><div><h1>Smart Budget Planner</h1><p>Track, budget and understand your spending</p></div></div>
+      <div class="topbar-actions">
+        <div class="month-switch">
+          <button type="button" id="prevMonth" aria-label="Previous month">&#8249;</button>
+          <input type="month" id="monthPicker" aria-label="Select month" required>
+          <button type="button" id="nextMonth" aria-label="Next month">&#8250;</button>
+        </div>
+        <button type="button" class="btn btn-light" id="addTxBtn">+ Transaction</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="alerts" class="alerts" aria-live="polite"></section>
+
+    <section class="cards" aria-label="Monthly summary">
+      <article class="card stat"><span class="label">Income</span><strong id="sumIncome" class="pos">-</strong></article>
+      <article class="card stat"><span class="label">Expenses</span><strong id="sumExpense" class="neg">-</strong></article>
+      <article class="card stat"><span class="label">Net cash flow</span><strong id="sumNet">-</strong></article>
+      <article class="card stat"><span class="label">Savings rate</span><strong id="sumRate">-</strong></article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <div class="card-head"><h2>Cash flow</h2><span class="muted">Last 6 months</span></div>
+        <div class="chart-box"><canvas id="cashflowChart"></canvas></div>
+      </article>
+      <article class="card">
+        <div class="card-head"><h2>Spending by category</h2><span class="muted" id="catMonthLabel"></span></div>
+        <div class="chart-box"><canvas id="categoryChart"></canvas><p id="categoryEmpty" class="empty" hidden>No expenses recorded this month.</p></div>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Monthly budgets</h2><button type="button" class="btn btn-primary" id="addBudgetBtn">+ Set budget</button></div>
+      <div id="budgetList" class="budget-list"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Transactions</h2><span class="muted" id="txCount"></span></div>
+      <div class="filters">
+        <select id="fType" aria-label="Filter by type"><option value="">All types</option><option value="INCOME">Income</option><option value="EXPENSE">Expense</option></select>
+        <input id="fCategory" list="categoryOptions" placeholder="Category" aria-label="Filter by category">
+        <input type="date" id="fFrom" aria-label="From date">
+        <input type="date" id="fTo" aria-label="To date">
+        <input type="search" id="fSearch" placeholder="Search description" aria-label="Search">
+        <button type="button" class="btn btn-ghost" id="resetFilters">Reset</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Type</th><th class="right">Amount</th><th class="right">Actions</th></tr></thead>
+          <tbody id="txBody"></tbody>
+        </table>
+      </div>
+      <p id="txEmpty" class="empty" hidden>No transactions match your filters.</p>
+    </section>
+  </main>
+
+  <datalist id="categoryOptions"></datalist>
+
+  <dialog id="txDialog">
+    <form id="txForm" novalidate>
+      <h3 id="txDialogTitle">Add transaction</h3>
+      <input type="hidden" id="txId">
+      <div class="field"><label for="txType">Type</label><select id="txType"><option value="EXPENSE">Expense</option><option value="INCOME">Income</option></select></div>
+      <div class="field"><label for="txAmount">Amount</label><input id="txAmount" type="number" step="0.01" min="0.01" required></div>
+      <div class="field"><label for="txCategory">Category</label><input id="txCategory" list="categoryOptions" maxlength="50" required></div>
+      <div class="field"><label for="txDate">Date</label><input id="txDate" type="date" required></div>
+      <div class="field"><label for="txDescription">Description</label><input id="txDescription" maxlength="255"></div>
+      <p class="form-error" id="txError" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="btn btn-ghost" data-close="txDialog">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="budgetDialog">
+    <form id="budgetForm" novalidate>
+      <h3 id="budgetDialogTitle">Set budget</h3>
+      <input type="hidden" id="budgetId">
+      <div class="field"><label for="budgetCategory">Category</label><input id="budgetCategory" list="categoryOptions" maxlength="50" required></div>
+      <div class="field"><label for="budgetMonth">Month</label><input id="budgetMonth" type="month" required></div>
+      <div class="field"><label for="budgetLimit">Monthly limit</label><input id="budgetLimit" type="number" step="0.01" min="0.01" required></div>
+      <p class="hint">You will be warned at 80% and again at 100% of the limit.</p>
+      <p class="form-error" id="budgetError" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="btn btn-ghost" data-close="budgetDialog">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="/webjars/chart.js/4.4.1/dist/chart.umd.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

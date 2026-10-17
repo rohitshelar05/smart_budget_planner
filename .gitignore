@@ -1,0 +1,6 @@
+target/
+config/application.properties
+config/application-local.properties
+.idea/
+*.iml
+.vscode/
